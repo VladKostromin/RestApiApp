@@ -3,7 +3,6 @@ package com.vladkostromin.service;
 import com.vladkostromin.model.User;
 import com.vladkostromin.repository.UserRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class UserService {

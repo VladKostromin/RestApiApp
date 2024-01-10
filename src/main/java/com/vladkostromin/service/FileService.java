@@ -13,7 +13,7 @@ public class FileService {
         this.fileRepository = fileRepository;
     }
 
-    public File getFileByUd(Integer id) {
+    public File getFileById(Integer id) {
         return fileRepository.findById(id);
     }
 

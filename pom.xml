@@ -17,9 +17,10 @@
         <mysql.version>8.0.28</mysql.version>
         <servlet.version>3.1.0</servlet.version>
         <flyway.version>9.21.0</flyway.version>
-        <flyway.version.plugin>9.15.2</flyway.version.plugin>
+        <flyway.version.plugin>9.18.0</flyway.version.plugin>
         <tomcat.plugin.version>2.2</tomcat.plugin.version>
         <gson.version>2.10.1</gson.version>
+        <swagger.version>2.2.13</swagger.version>
     </properties>
 
     <dependencies>

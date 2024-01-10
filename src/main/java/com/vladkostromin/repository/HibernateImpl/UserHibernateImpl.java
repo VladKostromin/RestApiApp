@@ -17,18 +17,16 @@ public class UserHibernateImpl implements UserRepository {
     @Override
     public User findById(Integer id) {
         try (Session session = HibernateUtils.getSession()) {
-            User user = session.createQuery(GET_HQL, User.class)
+            return session.createQuery(GET_HQL, User.class)
                     .setParameter("id", id)
                     .uniqueResult();
-            return user;
         }
     }
 
     @Override
     public List<User> getAll() {
         try(Session session = HibernateUtils.getSession()) {
-            List<User> users = session.createQuery(GET_ALL_HQL, User.class).list();
-            return users;
+            return session.createQuery(GET_ALL_HQL, User.class).list();
         }
     }
 

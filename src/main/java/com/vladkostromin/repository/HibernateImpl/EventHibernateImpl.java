@@ -4,16 +4,21 @@ import com.vladkostromin.model.Event;
 import com.vladkostromin.repository.EventRepository;
 import com.vladkostromin.util.HibernateUtils;
 import jakarta.persistence.EntityNotFoundException;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import java.util.List;
 
 public class EventHibernateImpl implements EventRepository {
+
+    private static final String HQL = "SELECT e FROM Event e JOIN FETCH e.user JOIN FETCH e.file WHERE e.id = :eventId";
     @Override
     public Event findById(Integer id) {
         try(Session session = HibernateUtils.getSession()) {
-            return session.find(Event.class, id);
+            Event event = session.createQuery(HQL, Event.class).setParameter("eventId", id).uniqueResult();
+            Hibernate.initialize(event.getUser());
+            return event;
         }
     }
 
@@ -58,7 +63,7 @@ public class EventHibernateImpl implements EventRepository {
     public Event deleteById(Integer id) {
         try(Session session = HibernateUtils.getSession()) {
             Transaction transaction = session.beginTransaction();
-            Event eventToDelete = findById(id);
+            Event eventToDelete = session.createQuery(HQL, Event.class).setParameter("eventId", id).uniqueResult();
             if(eventToDelete == null) throw new EntityNotFoundException("Event with " + id + " not found");
             try {
                 session.remove(eventToDelete);

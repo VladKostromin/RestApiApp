@@ -13,7 +13,7 @@ public class FileController {
     }
 
     public File getFile(Integer id) {
-        return fileService.getFileByUd(id);
+        return fileService.getFileById(id);
     }
 
     public File createFile(File file) {
