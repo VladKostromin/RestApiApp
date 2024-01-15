@@ -2,7 +2,11 @@ package com.vladkostromin.servlet;
 
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.vladkostromin.controller.UserController;
+import com.vladkostromin.jsonserializer.EventSerializer;
+import com.vladkostromin.jsonserializer.UserSerializer;
+import com.vladkostromin.model.Event;
 import com.vladkostromin.model.User;
 import com.vladkostromin.repository.HibernateImpl.UserHibernateImpl;
 import com.vladkostromin.service.UserService;
@@ -40,7 +44,12 @@ public class UserServlet extends HttpServlet {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
 
-        String jsonResponse = new Gson().toJson(user);
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(UserSerializer.class,new UserSerializer());
+        gsonBuilder.registerTypeAdapter(Event.class, new EventSerializer());
+        Gson gson = gsonBuilder.create();
+
+        String jsonResponse = gson.toJson(user);
         resp.getWriter().println(jsonResponse);
 
     }

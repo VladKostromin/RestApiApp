@@ -48,17 +48,11 @@ public class EventServlet extends HttpServlet {
         Event event = eventController.getEvent(id);
         System.out.println(event);
 
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
-
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(Event.class, new EventSerializer());
-
-        Gson gson = gsonBuilder.create();
-        String jsonResponse = gson.toJson(event);
-        resp.getWriter().println(jsonResponse);
+        jsonResp(resp, event);
 
     }
+
+
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -95,21 +89,24 @@ public class EventServlet extends HttpServlet {
         Integer id = Integer.parseInt(req.getParameter("event_id"));
         Event deletedEvent = eventController.deleteEvent(id);
 
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
-
-
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(Event.class, new EventSerializer());
-
-        Gson gson = gsonBuilder.create();
-        String jsonResponse = gson.toJson(deletedEvent);
-        resp.getWriter().println(jsonResponse);
+        jsonResp(resp, deletedEvent);
     }
 
     @Override
     public void destroy() {
         super.destroy();
+    }
+
+    private void jsonResp(HttpServletResponse resp, Event event) throws IOException {
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(Event.class, new EventSerializer());
+
+        Gson gson = gsonBuilder.create();
+        String jsonResponse = gson.toJson(event);
+        resp.getWriter().println(jsonResponse);
     }
 
 
