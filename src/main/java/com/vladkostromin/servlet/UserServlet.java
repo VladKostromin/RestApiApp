@@ -41,16 +41,7 @@ public class UserServlet extends HttpServlet {
             resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
-
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(UserSerializer.class,new UserSerializer());
-        gsonBuilder.registerTypeAdapter(Event.class, new EventSerializer());
-        Gson gson = gsonBuilder.create();
-
-        String jsonResponse = gson.toJson(user);
-        resp.getWriter().println(jsonResponse);
+        jsonSerializeBuilder(resp, user);
 
     }
 
@@ -66,11 +57,7 @@ public class UserServlet extends HttpServlet {
         userToUpdate.setName(nameToUpdate);
         User updatedUser = userController.updateUser(userToUpdate);
 
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
-
-        String jsonResponse = new Gson().toJson(updatedUser);
-        resp.getWriter().println(jsonResponse);
+        jsonSerializeBuilder(resp, updatedUser);
 
     }
 
@@ -83,11 +70,8 @@ public class UserServlet extends HttpServlet {
             return;
         }
         User user = userController.createUser(new User(null, name, new ArrayList<>()));
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
 
-        String jsonResponse = new Gson().toJson(user);
-        resp.getWriter().println(jsonResponse);
+        jsonSerializeBuilder(resp, user);
     }
 
     @Override
@@ -95,14 +79,23 @@ public class UserServlet extends HttpServlet {
         Integer id = Integer.parseInt(req.getParameter("user_id"));
         User deletedUser = userController.deleteUser(id);
 
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
-
-        String jsonResponse = new Gson().toJson(deletedUser);
-        resp.getWriter().println(jsonResponse);
+        jsonSerializeBuilder(resp, deletedUser);
     }
 
     @Override
     public void destroy() {
+    }
+
+    private void jsonSerializeBuilder(HttpServletResponse resp, User user) throws IOException {
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(UserSerializer.class,new UserSerializer());
+        gsonBuilder.registerTypeAdapter(Event.class, new EventSerializer());
+        Gson gson = gsonBuilder.create();
+
+        String jsonResponse = gson.toJson(user);
+        resp.getWriter().println(jsonResponse);
     }
 }

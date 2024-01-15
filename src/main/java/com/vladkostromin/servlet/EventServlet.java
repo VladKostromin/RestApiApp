@@ -48,7 +48,7 @@ public class EventServlet extends HttpServlet {
         Event event = eventController.getEvent(id);
         System.out.println(event);
 
-        jsonResp(resp, event);
+        jsonSerializeBuilder(resp, event);
 
     }
 
@@ -70,11 +70,7 @@ public class EventServlet extends HttpServlet {
 
         Event updatedEvent = eventController.updateEvent(eventToUpdate);
 
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
-
-        String jsonResponse = new Gson().toJson(updatedEvent);
-        resp.getWriter().println(jsonResponse);
+        jsonSerializeBuilder(resp, updatedEvent);
 
 
     }
@@ -89,7 +85,7 @@ public class EventServlet extends HttpServlet {
         Integer id = Integer.parseInt(req.getParameter("event_id"));
         Event deletedEvent = eventController.deleteEvent(id);
 
-        jsonResp(resp, deletedEvent);
+        jsonSerializeBuilder(resp, deletedEvent);
     }
 
     @Override
@@ -97,7 +93,7 @@ public class EventServlet extends HttpServlet {
         super.destroy();
     }
 
-    private void jsonResp(HttpServletResponse resp, Event event) throws IOException {
+    private void jsonSerializeBuilder(HttpServletResponse resp, Event event) throws IOException {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
 
