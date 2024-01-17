@@ -10,7 +10,7 @@
 <!--    User Servlet-->
     <servlet>
         <servlet-name>UserServlet</servlet-name>
-        <servlet-class>com.vladkostromin.servlet.UserServlet</servlet-class>
+        <servlet-class>com.vladkostromin.controller.UserController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>UserServlet</servlet-name>
@@ -20,7 +20,7 @@
 <!-- File Servlet-->
     <servlet>
         <servlet-name>FileServlet</servlet-name>
-        <servlet-class>com.vladkostromin.servlet.FileServlet</servlet-class>
+        <servlet-class>com.vladkostromin.controller.FileController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>FileServlet</servlet-name>
@@ -30,7 +30,7 @@
     <!-- Event Servlet-->
     <servlet>
         <servlet-name>EventServlet</servlet-name>
-        <servlet-class>com.vladkostromin.servlet.EventServlet</servlet-class>
+        <servlet-class>com.vladkostromin.controller.EventController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>EventServlet</servlet-name>

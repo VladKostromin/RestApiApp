@@ -1,34 +1,99 @@
 package com.vladkostromin.controller;
 
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.vladkostromin.jsonserializer.EventSerializer;
+import com.vladkostromin.jsonserializer.UserSerializer;
+import com.vladkostromin.model.Event;
 import com.vladkostromin.model.User;
+import com.vladkostromin.repository.HibernateImpl.UserHibernateImpl;
 import com.vladkostromin.service.UserService;
 
-import java.util.List;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
 
-public class UserController {
-    private final UserService userService;
+public class UserController extends HttpServlet {
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+
+    private final static UserService userService = new UserService(new UserHibernateImpl());
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
     }
 
-    public User getUser(Integer id) {
-        return userService.getUserById(id);
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Integer id = Integer.parseInt(req.getParameter("user_id"));
+        if(id == null) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+        User user = userService.getUserById(id);
+        if(user == null) {
+            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+        jsonSerializeBuilder(resp, user);
+
     }
 
-    public User createUser(User user) {
-        return userService.saveUser(user);
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Integer id = Integer.parseInt(req.getParameter("user_id"));
+        String nameToUpdate = req.getParameter("name");
+        if(id == null || nameToUpdate.equals(null)) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+        User userToUpdate = userService.getUserById(id);
+        userToUpdate.setName(nameToUpdate);
+        User updatedUser = userService.updateUser(userToUpdate);
+
+        jsonSerializeBuilder(resp, updatedUser);
+
     }
 
-    public User updateUser(User user) {
-        return userService.updateUser(user);
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String name = req.getParameter("name");
+
+        if(name == null) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+        User user = userService.saveUser(new User(null, name, new ArrayList<>()));
+
+        jsonSerializeBuilder(resp, user);
     }
 
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Integer id = Integer.parseInt(req.getParameter("user_id"));
+        User deletedUser = userService.deleteUser(id);
+
+        jsonSerializeBuilder(resp, deletedUser);
     }
 
-    public User deleteUser(Integer id) {
-        return userService.deleteUser(id);
+    @Override
+    public void destroy() {
+    }
+
+    private void jsonSerializeBuilder(HttpServletResponse resp, User user) throws IOException {
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(UserSerializer.class,new UserSerializer());
+        gsonBuilder.registerTypeAdapter(Event.class, new EventSerializer());
+        Gson gson = gsonBuilder.create();
+
+        String jsonResponse = gson.toJson(user);
+        resp.getWriter().println(jsonResponse);
     }
 }
