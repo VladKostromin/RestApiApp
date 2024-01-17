@@ -64,7 +64,6 @@ public class EventHibernateImpl implements EventRepository {
         try(Session session = HibernateUtils.getSession()) {
             Transaction transaction = session.beginTransaction();
             Event eventToDelete = session.createQuery(HQL, Event.class).setParameter("eventId", id).uniqueResult();
-            if(eventToDelete == null) throw new EntityNotFoundException("Event with " + id + " not found");
             try {
                 session.remove(eventToDelete);
                 transaction.commit();

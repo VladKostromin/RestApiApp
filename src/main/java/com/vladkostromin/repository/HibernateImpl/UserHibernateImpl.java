@@ -17,9 +17,10 @@ public class UserHibernateImpl implements UserRepository {
     @Override
     public User findById(Integer id) {
         try (Session session = HibernateUtils.getSession()) {
-            return session.createQuery(GET_HQL, User.class)
+            User user = session.createQuery(GET_HQL, User.class)
                     .setParameter("id", id)
                     .uniqueResult();
+            return user;
         }
     }
 

@@ -2,6 +2,7 @@ package com.vladkostromin.service;
 
 import com.vladkostromin.model.Event;
 import com.vladkostromin.repository.EventRepository;
+import jakarta.persistence.EntityNotFoundException;
 
 import java.util.List;
 
@@ -13,7 +14,9 @@ public class EventService {
     }
 
     public Event getEventById(Integer id) {
-        return eventRepository.findById(id);
+        Event event = eventRepository.findById(id);
+        if(event == null) throw new EntityNotFoundException("event with " + id + " not found");
+        return event;
     }
 
     public Event saveEvent(Event event) {
@@ -21,7 +24,9 @@ public class EventService {
     }
 
     public Event updateEvent(Event event) {
-        return eventRepository.update(event);
+        Event updatedEvent = eventRepository.update(event);
+        if(updatedEvent == null) throw new EntityNotFoundException("event with " + event.getId() + " not found");
+        return updatedEvent;
     }
 
     public List<Event> getAllEvents() {
@@ -29,6 +34,8 @@ public class EventService {
     }
 
     public Event deleteEvent(Integer id) {
-        return eventRepository.deleteById(id);
+        Event eventToDelete = eventRepository.deleteById(id);
+        if(eventToDelete == null) throw new EntityNotFoundException("Event with " + id + " not found");
+        return eventToDelete;
     }
 }
