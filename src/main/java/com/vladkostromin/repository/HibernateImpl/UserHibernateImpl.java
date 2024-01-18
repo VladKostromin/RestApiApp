@@ -17,10 +17,9 @@ public class UserHibernateImpl implements UserRepository {
     @Override
     public User findById(Integer id) {
         try (Session session = HibernateUtils.getSession()) {
-            User user = session.createQuery(GET_HQL, User.class)
+            return session.createQuery(GET_HQL, User.class)
                     .setParameter("id", id)
                     .uniqueResult();
-            return user;
         }
     }
 
@@ -66,7 +65,6 @@ public class UserHibernateImpl implements UserRepository {
         try(Session session = HibernateUtils.getSession()) {
             Transaction transaction = session.beginTransaction();
             User user = findById(id);
-            if(user == null) throw new EntityNotFoundException("User with " + id + " not found");
             try {
                 session.remove(user);
                 transaction.commit();

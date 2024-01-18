@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class UserController extends HttpServlet {
 
@@ -29,17 +30,23 @@ public class UserController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Integer id = Integer.parseInt(req.getParameter("user_id"));
-        if(id == null) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
+        String getAllParam = req.getParameter("get_all_users");
+        if(getAllParam == null) {
+            Integer id = Integer.parseInt(req.getParameter("user_id"));
+            if(id == null) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return;
+            }
+            User user = userService.getUserById(id);
+            if(user == null) {
+                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+            jsonSerializeBuilder(resp, user);
+        } else {
+            List<User> users = userService.getAllUsers();
+
         }
-        User user = userService.getUserById(id);
-        if(user == null) {
-            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return;
-        }
-        jsonSerializeBuilder(resp, user);
 
     }
 

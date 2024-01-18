@@ -2,6 +2,7 @@ package com.vladkostromin.service;
 
 import com.vladkostromin.model.User;
 import com.vladkostromin.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 
 import java.util.List;
 
@@ -13,7 +14,9 @@ public class UserService {
     }
 
     public User getUserById(Integer id) {
-        return userRepository.findById(id);
+        User user = userRepository.findById(id);
+        if(user == null) throw new EntityNotFoundException("user with " + id + " not found");
+        return user;
     }
 
     public User saveUser(User user) {
@@ -21,13 +24,17 @@ public class UserService {
     }
 
     public User updateUser(User user) {
-        return userRepository.update(user);
+        User updatedUser = userRepository.update(user);
+        if(updatedUser == null) throw new EntityNotFoundException("user with " + user.getId() + " not found");
+        return updatedUser;
     }
 
     public List<User> getAllUsers() {
         return userRepository.getAll();
     }
     public User deleteUser(Integer id) {
-        return userRepository.deleteById(id);
+        User deletedUser = userRepository.deleteById(id);
+        if(deletedUser == null) throw new EntityNotFoundException("user with " + id + " not found");
+        return deletedUser;
     }
 }

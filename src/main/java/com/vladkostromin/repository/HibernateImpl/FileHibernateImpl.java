@@ -14,9 +14,7 @@ public class FileHibernateImpl implements FileRepository {
     @Override
     public File findById(Integer id) {
         try(Session session = HibernateUtils.getSession()) {
-            File file = session.find(File.class, id);
-            if(file == null) throw new EntityNotFoundException("file with " + id + " not found");
-            return file;
+            return session.find(File.class, id);
         }
     }
 
@@ -63,7 +61,6 @@ public class FileHibernateImpl implements FileRepository {
         try(Session session = HibernateUtils.getSession()) {
             Transaction transaction = session.beginTransaction();
             File file = findById(id);
-            if(file == null) throw new EntityNotFoundException("File with " + id + " not found");
             try {
                 session.remove(file);
                 transaction.commit();
