@@ -45,7 +45,9 @@ public class UserController extends HttpServlet {
             jsonSerializeBuilder(resp, user);
         } else {
             List<User> users = userService.getAllUsers();
-
+            for (User u : users) {
+                jsonSerializeBuilder(resp, u);
+            }
         }
 
     }

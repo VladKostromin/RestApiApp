@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 public class FileController extends HttpServlet {
 
@@ -34,22 +35,36 @@ public class FileController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Integer fileId = Integer.parseInt(req.getParameter("file_id"));
-        Integer userId = Integer.parseInt(req.getParameter("user_id"));
+        String getAllParam = req.getParameter("get_all_files");
+        if(getAllParam == null) {
+            Integer fileId = Integer.parseInt(req.getParameter("file_id"));
+            Integer userId = Integer.parseInt(req.getParameter("user_id"));
+            if(fileId == null || userId == null) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return;
+            }
+            File file = fileService.getFileById(fileId);
+            User user = userService.getUserById(userId);
+            eventService.saveEvent(new Event(null, user, file));
 
-        if(fileId == null || userId == null) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
+            resp.setContentType("application/json");
+            resp.setCharacterEncoding("UTF-8");
+
+            String jsonResponse = new Gson().toJson(file);
+            resp.getWriter().println(jsonResponse);
+        } else {
+            List<File> fileList = fileService.getAllFiles();
+            for (File f : fileList) {
+                resp.setContentType("application/json");
+                resp.setCharacterEncoding("UTF-8");
+
+                String jsonResponse = new Gson().toJson(f);
+                resp.getWriter().println(jsonResponse);
+            }
+
         }
-        File file = fileService.getFileById(fileId);
-        User user = userService.getUserById(userId);
-        eventService.saveEvent(new Event(null, user, file));
 
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
 
-        String jsonResponse = new Gson().toJson(file);
-        resp.getWriter().println(jsonResponse);
     }
 
     @Override

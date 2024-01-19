@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 public class EventController extends HttpServlet {
 
@@ -36,15 +37,25 @@ public class EventController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Integer id = Integer.parseInt(req.getParameter("event_id"));
-        if(id == null) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
-        Event event = eventService.getEventById(id);
-        System.out.println(event);
+        String getAllParam = req.getParameter("get_all_events");
+        if(getAllParam == null) {
 
-        jsonSerializeBuilder(resp, event);
+            Integer id = Integer.parseInt(req.getParameter("event_id"));
+            if(id == null) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return;
+            }
+            Event event = eventService.getEventById(id);
+
+            jsonSerializeBuilder(resp, event);
+        } else {
+            List<Event> eventList = eventService.getAllEvents();
+
+            for (Event e : eventList) {
+                jsonSerializeBuilder(resp, e);
+            }
+        }
+
 
     }
 
